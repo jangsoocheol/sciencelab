@@ -26,7 +26,7 @@ export async function createSubmission(
     ? { columns: previewData.columns, rows: JSON.stringify(previewData.rows) }
     : undefined;
 
-  const docRef = await addDoc(collection(db, "submissions"), {
+  const docData: any = {
     uid,
     experimentId,
     studentId,
@@ -35,11 +35,18 @@ export async function createSubmission(
     fileType,
     fileSize: file.size,
     storagePath: "",
-    previewData: dataToStore,
-    previewStoragePath: previewBlob ? "" : undefined,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  });
+  };
+
+  if (previewData) {
+    docData.previewData = dataToStore;
+  }
+  if (previewBlob) {
+    docData.previewStoragePath = "";
+  }
+
+  const docRef = await addDoc(collection(db, "submissions"), docData);
 
   const submissionId = docRef.id;
   const storagePath = `submissions/${uid}/${experimentId}/${submissionId}/original.${fileType}`;
