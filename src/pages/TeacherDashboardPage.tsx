@@ -22,6 +22,7 @@ export function TeacherDashboardPage() {
   const [submissions, setSubmissions] = useState<Array<Submission & { id: string }>>([]);
   const [submissionsLoading, setSubmissionsLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState<Record<string, string>>({});
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);;
 
   useEffect(() => {
     loadExperiments();
@@ -85,10 +86,12 @@ export function TeacherDashboardPage() {
     if (selectedExperimentId === experimentId) {
       setSelectedExperimentId(null);
       setSubmissions([]);
+      setSelectedStudentId(null);
       return;
     }
 
     setSelectedExperimentId(experimentId);
+    setSelectedStudentId(null);
     setSubmissionsLoading(true);
     setSubmissions([]);
     setPreviewImages({});
@@ -202,8 +205,29 @@ export function TeacherDashboardPage() {
                   ) : submissions.length === 0 ? (
                     <p>제출된 데이터가 없습니다.</p>
                   ) : (
-                    <div className="submissions-list" style={{ marginTop: "12px" }}>
-                      {submissions.map((submission) => (
+                    <>
+                      <div style={{ marginBottom: "16px" }}>
+                        <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontWeight: 500 }}>
+                          학생 필터
+                          <select
+                            value={selectedStudentId || ""}
+                            onChange={(e) => setSelectedStudentId(e.target.value || null)}
+                            style={{ padding: "8px 12px", border: "1px solid var(--border)", borderRadius: "8px" }}
+                          >
+                            <option value="">모든 학생</option>
+                            {[...new Map(submissions.map((s) => [s.studentId, s])).values()].map((s) => (
+                              <option key={s.studentId} value={s.studentId}>
+                                {s.studentName} ({s.studentId})
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      <div className="submissions-list" style={{ marginTop: "12px" }}>
+                        {submissions
+                          .filter((submission) => !selectedStudentId || submission.studentId === selectedStudentId)
+                          .map((submission) => (
                         <div key={submission.id} style={{ padding: "12px", background: "var(--bg)", borderRadius: "8px" }}>
                           <h4 style={{ margin: "0 0 8px 0" }}>{submission.studentName} ({submission.studentId})</h4>
                           <p style={{ fontSize: "0.9rem", color: "var(--text-light)", margin: "0 0 8px 0" }}>
@@ -221,7 +245,8 @@ export function TeacherDashboardPage() {
                           </button>
                         </div>
                       ))}
-                    </div>
+                      </div>
+                    </>
                   )}
                 </div>
               )}
