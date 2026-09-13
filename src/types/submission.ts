@@ -2,7 +2,7 @@ export type FileKind = "csv" | "xlsx" | "jpg" | "jpeg" | "png";
 
 export interface PreviewData {
   columns: string[];
-  rows: (string | number)[][];
+  rows: (string | number)[][] | string;
 }
 
 export interface Submission {

@@ -20,11 +20,23 @@ export function DataPreview({ previewData, previewImageUrl, fileName }: DataPrev
     return <p>미리보기 없음</p>;
   }
 
+  // rows가 JSON 문자열로 저장된 경우 파싱
+  let rows: (string | number)[][] = [];
+  if (typeof previewData.rows === "string") {
+    try {
+      rows = JSON.parse(previewData.rows);
+    } catch {
+      return <p>데이터 파싱 오류</p>;
+    }
+  } else {
+    rows = previewData.rows;
+  }
+
   const numericColumns = previewData.columns.filter((_col, idx) =>
-    previewData.rows.some((row) => typeof row[idx] === "number")
+    rows.some((row) => typeof row[idx] === "number")
   );
 
-  const chartData = previewData.rows.map((row) => {
+  const chartData = rows.map((row) => {
     const obj: any = {};
     previewData.columns.forEach((col, idx) => {
       obj[col] = row[idx];
@@ -44,7 +56,7 @@ export function DataPreview({ previewData, previewImageUrl, fileName }: DataPrev
             </tr>
           </thead>
           <tbody>
-            {previewData.rows.slice(0, 10).map((row, idx) => (
+            {rows.slice(0, 10).map((row, idx) => (
               <tr key={idx}>
                 {row.map((cell, cellIdx) => (
                   <td key={cellIdx}>{cell}</td>
@@ -53,7 +65,7 @@ export function DataPreview({ previewData, previewImageUrl, fileName }: DataPrev
             ))}
           </tbody>
         </table>
-        {previewData.rows.length > 10 && <p>... (더보기)</p>}
+        {rows.length > 10 && <p>... (더보기)</p>}
       </div>
 
       {numericColumns.length > 0 && (

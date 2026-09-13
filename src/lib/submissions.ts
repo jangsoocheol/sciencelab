@@ -22,6 +22,10 @@ export async function createSubmission(
   previewData?: PreviewData,
   previewBlob?: Blob
 ): Promise<string> {
+  const dataToStore = previewData
+    ? { columns: previewData.columns, rows: JSON.stringify(previewData.rows) }
+    : undefined;
+
   const docRef = await addDoc(collection(db, "submissions"), {
     uid,
     experimentId,
@@ -31,7 +35,7 @@ export async function createSubmission(
     fileType,
     fileSize: file.size,
     storagePath: "",
-    previewData,
+    previewData: dataToStore,
     previewStoragePath: previewBlob ? "" : undefined,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
