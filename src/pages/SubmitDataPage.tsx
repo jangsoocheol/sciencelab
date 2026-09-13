@@ -15,6 +15,7 @@ export function SubmitDataPage() {
   const { firebaseUser, profile } = useAuth();
   const [experiments, setExperiments] = useState<Array<Experiment & { id: string }>>([]);
   const [selectedExperimentId, setSelectedExperimentId] = useState("");
+  const [experimentDate, setExperimentDate] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,8 +64,8 @@ export function SubmitDataPage() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!selectedExperimentId || !selectedFile || !firebaseUser || !profile) {
-      setError("모든 항목을 선택해 주세요.");
+    if (!selectedExperimentId || !experimentDate || !selectedFile || !firebaseUser || !profile) {
+      setError("모든 항목을 입력해 주세요.");
       return;
     }
 
@@ -91,6 +92,7 @@ export function SubmitDataPage() {
         selectedExperimentId,
         profile.studentId,
         profile.name,
+        experimentDate,
         selectedFile,
         ext,
         previewData,
@@ -100,6 +102,7 @@ export function SubmitDataPage() {
       setSuccess("파일이 업로드되었습니다!");
       setSelectedFile(null);
       setSelectedExperimentId("");
+      setExperimentDate("");
       const input = document.querySelector('input[type="file"]') as HTMLInputElement;
       if (input) input.value = "";
     } catch (err) {
@@ -132,6 +135,11 @@ export function SubmitDataPage() {
               </option>
             ))}
           </select>
+        </label>
+
+        <label>
+          실험 날짜
+          <input type="date" value={experimentDate} onChange={(e) => setExperimentDate(e.target.value)} required />
         </label>
 
         <label>

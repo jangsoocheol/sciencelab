@@ -87,6 +87,7 @@ export function MyDataPage() {
           {submissions.map((submission) => (
             <div key={submission.id} className="submission-item">
               <h3>{submission.fileName}</h3>
+              <p>실험 날짜: {submission.experimentDate}</p>
               <p>업로드: {new Date(submission.createdAt as unknown as number).toLocaleString()}</p>
 
               <DataPreview

@@ -29,3 +29,14 @@ export async function createUserProfile(
     updatedAt: serverTimestamp(),
   });
 }
+
+export async function updateUserProfile(
+  uid: string,
+  input: Partial<{ name: string; studentId: string }>
+): Promise<void> {
+  const { updateDoc } = await import("firebase/firestore");
+  await updateDoc(doc(db, "users", uid), {
+    ...input,
+    updatedAt: serverTimestamp(),
+  });
+}

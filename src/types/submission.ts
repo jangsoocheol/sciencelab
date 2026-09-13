@@ -10,6 +10,7 @@ export interface Submission {
   experimentId: string;
   studentId: string;
   studentName: string;
+  experimentDate: string;
   fileName: string;
   fileType: FileKind;
   fileSize: number;

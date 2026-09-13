@@ -116,6 +116,7 @@ export function AllExperimentsDataPage() {
             <div key={submission.id} className="submission-item">
               <h3>{submission.studentName} ({submission.studentId})</h3>
               <p>{submission.fileName}</p>
+              <p>실험 날짜: {submission.experimentDate}</p>
               <p>업로드: {new Date(submission.createdAt as unknown as number).toLocaleString()}</p>
 
               <DataPreview
