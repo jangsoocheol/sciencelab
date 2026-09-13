@@ -114,7 +114,7 @@ export function SubmitDataPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <h1>실험 데이터 제출</h1>
         <Link to="/my-data">
-          <button style={{ padding: "8px 16px", fontSize: "0.9rem" }}>내 데이터</button>
+          <button style={{ padding: "8px 16px", fontSize: "0.9rem" }}>내 데이터 확인(그래프)</button>
         </Link>
       </div>
 
