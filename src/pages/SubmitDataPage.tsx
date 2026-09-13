@@ -111,18 +111,13 @@ export function SubmitDataPage() {
   }
 
   return (
-    <div className="page">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", gap: "8px" }}>
-        <h1 style={{ margin: 0 }}>실험 데이터 제출</h1>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button onClick={() => navigate("/")} style={{ padding: "8px 16px", fontSize: "0.9rem" }}>홈</button>
-          <Link to="/my-data">
-            <button style={{ padding: "8px 16px", fontSize: "0.9rem" }}>내 데이터 확인(그래프)</button>
-          </Link>
-        </div>
+    <div className="page" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1>실험 데이터 제출</h1>
+        <button onClick={() => navigate("/")} style={{ padding: "8px 16px", fontSize: "0.9rem" }}>홈</button>
       </div>
 
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className="form" style={{ flex: 1 }}>
         <label>
           실험 선택
           <select
@@ -153,6 +148,10 @@ export function SubmitDataPage() {
         {error && <p className="error-text">{error}</p>}
         {success && <p className="success-text">{success}</p>}
       </form>
+
+      <Link to="/my-data" style={{ width: "100%" }}>
+        <button style={{ width: "100%", padding: "14px 16px" }}>내 데이터 확인(그래프)</button>
+      </Link>
     </div>
   );
 }

@@ -1,6 +1,17 @@
 :root {
+  --primary: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #1e40af;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --text: #1e293b;
+  --text-light: #64748b;
+  --border: #e2e8f0;
+  --success: #10b981;
+  --error: #ef4444;
+
   color-scheme: light dark;
-  font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 * {
@@ -10,6 +21,8 @@
 body {
   margin: 0;
   min-height: 100svh;
+  background: var(--bg);
+  color: var(--text);
 }
 
 #root {
@@ -18,55 +31,31 @@ body {
   flex-direction: column;
 }
 
-button,
-input {
+h1 { margin: 0 0 8px 0; font-size: 28px; font-weight: 700; }
+h2 { margin: 24px 0 16px 0; font-size: 20px; font-weight: 600; }
+h3 { margin: 12px 0 8px 0; font-size: 16px; font-weight: 600; }
+p { margin: 0; }
+
+button, input, select, textarea {
   font: inherit;
-}
-
-.page {
-  flex: 1;
-  padding: 24px 16px;
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-.page-centered {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: 16px;
-  text-align: center;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  text-align: left;
-}
-
-.form label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 0.9rem;
-}
-
-.form input {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #888;
+  color: inherit;
 }
 
 button {
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-radius: 8px;
-  border: 1px solid #888;
-  background: transparent;
+  border: none;
+  background: var(--primary);
+  color: white;
   cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 button:disabled {
@@ -74,26 +63,73 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.delete-btn {
+  background: var(--error);
+}
+.delete-btn:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.page {
+  flex: 1;
+  padding: 24px 16px;
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.page-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+  height: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.form input,
+.form textarea,
+.form select {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all 0.2s;
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 .nav-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.error-text {
-  color: #d33;
-}
-
-.success-text {
-  color: #0b0;
-}
-
-.form textarea,
-.form select {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #888;
-  font: inherit;
+.nav-list button {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
 }
 
 a {
@@ -105,20 +141,14 @@ a button {
   width: 100%;
 }
 
-hr {
-  margin: 24px 0;
-  border: none;
-  border-top: 1px solid #ddd;
+.error-text {
+  color: var(--error);
+  font-weight: 500;
 }
 
-h2 {
-  margin-top: 24px;
-  margin-bottom: 16px;
-}
-
-h3 {
-  margin: 8px 0;
-  font-size: 1.1rem;
+.success-text {
+  color: var(--success);
+  font-weight: 500;
 }
 
 .experiments-list,
@@ -131,17 +161,26 @@ h3 {
 .experiment-item,
 .submission-item {
   padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #f9f9f9;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+}
+
+.experiment-item:hover,
+.submission-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-light);
 }
 
 .preview-container {
   margin: 16px 0;
-  padding: 12px;
-  background: #fff;
-  border-radius: 8px;
-  border: 1px solid #eee;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .preview-table {
@@ -157,14 +196,15 @@ h3 {
 
 .preview-table th,
 .preview-table td {
-  padding: 8px;
+  padding: 10px 12px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border);
 }
 
 .preview-table th {
-  background: #f0f0f0;
-  font-weight: bold;
+  background: var(--bg);
+  font-weight: 600;
+  color: var(--text);
 }
 
 .preview-chart {
@@ -174,20 +214,17 @@ h3 {
 .preview-image {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .submission-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .submission-actions button {
   flex: 1;
-}
-
-.delete-btn {
-  background: #fee;
-  color: #d33;
+  padding: 10px 12px;
+  font-size: 0.9rem;
 }
