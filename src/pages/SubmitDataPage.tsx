@@ -1,5 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { createSubmission } from "../lib/submissions";
 import { parseSpreadsheetFile } from "../lib/spreadsheet";
@@ -11,6 +11,7 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 const MAX_SPREADSHEET_SIZE = 5 * 1024 * 1024;
 
 export function SubmitDataPage() {
+  const navigate = useNavigate();
   const { firebaseUser, profile } = useAuth();
   const [experiments, setExperiments] = useState<Array<Experiment & { id: string }>>([]);
   const [selectedExperimentId, setSelectedExperimentId] = useState("");
@@ -111,11 +112,14 @@ export function SubmitDataPage() {
 
   return (
     <div className="page">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-        <h1>실험 데이터 제출</h1>
-        <Link to="/my-data">
-          <button style={{ padding: "8px 16px", fontSize: "0.9rem" }}>내 데이터 확인(그래프)</button>
-        </Link>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", gap: "8px" }}>
+        <h1 style={{ margin: 0 }}>실험 데이터 제출</h1>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button onClick={() => navigate("/")} style={{ padding: "8px 16px", fontSize: "0.9rem" }}>홈</button>
+          <Link to="/my-data">
+            <button style={{ padding: "8px 16px", fontSize: "0.9rem" }}>내 데이터 확인(그래프)</button>
+          </Link>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="form">
