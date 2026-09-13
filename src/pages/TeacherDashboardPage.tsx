@@ -1,7 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createExperiment, listAllExperiments, setExperimentActive } from "../lib/experiments";
+import { listSubmissionsByExperiment, getSubmissionDownloadUrl } from "../lib/submissions";
+import { DataPreview } from "../components/DataPreview";
 import type { Experiment } from "../types/experiment";
+import type { Submission } from "../types/submission";
 
 export function TeacherDashboardPage() {
   const navigate = useNavigate();
@@ -14,6 +17,11 @@ export function TeacherDashboardPage() {
   const [subject, setSubject] = useState("");
   const [grade, setGrade] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const [selectedExperimentId, setSelectedExperimentId] = useState<string | null>(null);
+  const [submissions, setSubmissions] = useState<Array<Submission & { id: string }>>([]);
+  const [submissionsLoading, setSubmissionsLoading] = useState(false);
+  const [previewImages, setPreviewImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadExperiments();
@@ -73,6 +81,59 @@ export function TeacherDashboardPage() {
     }
   }
 
+  async function handleViewData(experimentId: string) {
+    if (selectedExperimentId === experimentId) {
+      setSelectedExperimentId(null);
+      setSubmissions([]);
+      return;
+    }
+
+    setSelectedExperimentId(experimentId);
+    setSubmissionsLoading(true);
+    setSubmissions([]);
+    setPreviewImages({});
+
+    try {
+      const list = await listSubmissionsByExperiment(experimentId);
+      setSubmissions(list);
+      for (const submission of list) {
+        if (submission.previewStoragePath) {
+          loadPreviewImage(submission.id, submission.previewStoragePath);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setError("데이터 로드 실패");
+    } finally {
+      setSubmissionsLoading(false);
+    }
+  }
+
+  async function loadPreviewImage(submissionId: string, path: string) {
+    try {
+      const blob = await getSubmissionDownloadUrl(path);
+      const url = URL.createObjectURL(blob);
+      setPreviewImages((prev) => ({ ...prev, [submissionId]: url }));
+    } catch (err) {
+      console.error("Failed to load preview image:", err);
+    }
+  }
+
+  async function handleDownload(submission: Submission) {
+    try {
+      const blob = await getSubmissionDownloadUrl(submission.storagePath);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = submission.fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      setError("다운로드 실패");
+    }
+  }
+
   return (
     <div className="page">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
@@ -125,9 +186,45 @@ export function TeacherDashboardPage() {
               <p>{exp.description}</p>
               <p>과목: {exp.subject} | 학년: {exp.grade}</p>
               <p>상태: {exp.active ? "활성" : "비활성"}</p>
-              <button onClick={() => handleToggleActive(exp.id, exp.active)}>
-                {exp.active ? "비활성화" : "활성화"}
-              </button>
+              <div className="submission-actions">
+                <button onClick={() => handleToggleActive(exp.id, exp.active)}>
+                  {exp.active ? "비활성화" : "활성화"}
+                </button>
+                <button onClick={() => handleViewData(exp.id)}>
+                  {selectedExperimentId === exp.id ? "접기" : "데이터 조회"}
+                </button>
+              </div>
+
+              {selectedExperimentId === exp.id && (
+                <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid var(--border)" }}>
+                  {submissionsLoading ? (
+                    <p>로드 중...</p>
+                  ) : submissions.length === 0 ? (
+                    <p>제출된 데이터가 없습니다.</p>
+                  ) : (
+                    <div className="submissions-list" style={{ marginTop: "12px" }}>
+                      {submissions.map((submission) => (
+                        <div key={submission.id} style={{ padding: "12px", background: "var(--bg)", borderRadius: "8px" }}>
+                          <h4 style={{ margin: "0 0 8px 0" }}>{submission.studentName} ({submission.studentId})</h4>
+                          <p style={{ fontSize: "0.9rem", color: "var(--text-light)", margin: "0 0 8px 0" }}>
+                            실험 날짜: {submission.experimentDate} | 파일: {submission.fileName}
+                          </p>
+
+                          <DataPreview
+                            previewData={submission.previewData}
+                            previewImageUrl={previewImages[submission.id]}
+                            fileName={submission.fileName}
+                          />
+
+                          <button onClick={() => handleDownload(submission)} style={{ marginTop: "8px", fontSize: "0.9rem", padding: "8px 12px" }}>
+                            원본 다운로드
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
