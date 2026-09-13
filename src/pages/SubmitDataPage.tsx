@@ -1,4 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { createSubmission } from "../lib/submissions";
 import { parseSpreadsheetFile } from "../lib/spreadsheet";
@@ -110,7 +111,12 @@ export function SubmitDataPage() {
 
   return (
     <div className="page">
-      <h1>실험 데이터 제출</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+        <h1>실험 데이터 제출</h1>
+        <Link to="/my-data">
+          <button style={{ padding: "8px 16px", fontSize: "0.9rem" }}>내 데이터</button>
+        </Link>
+      </div>
 
       <form onSubmit={handleSubmit} className="form">
         <label>
