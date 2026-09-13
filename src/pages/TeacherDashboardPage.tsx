@@ -1,8 +1,10 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { createExperiment, listAllExperiments, setExperimentActive } from "../lib/experiments";
 import type { Experiment } from "../types/experiment";
 
 export function TeacherDashboardPage() {
+  const navigate = useNavigate();
   const [experiments, setExperiments] = useState<Array<Experiment & { id: string }>>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +75,10 @@ export function TeacherDashboardPage() {
 
   return (
     <div className="page">
-      <h1>실험 관리</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+        <h1 style={{ margin: 0 }}>실험 관리</h1>
+        <button onClick={() => navigate("/")} style={{ padding: "8px 16px", fontSize: "0.9rem" }}>홈</button>
+      </div>
 
       <form onSubmit={handleSubmit} className="form">
         <label>

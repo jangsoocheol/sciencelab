@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { listMySubmissions, deleteSubmission, getSubmissionDownloadUrl } from "../lib/submissions";
-import { formatTimestamp } from "../lib/dateFormat";
 import { DataPreview } from "../components/DataPreview";
 import type { Submission } from "../types/submission";
 
 export function MyDataPage() {
+  const navigate = useNavigate();
   const { firebaseUser } = useAuth();
   const [submissions, setSubmissions] = useState<Array<Submission & { id: string }>>([]);
   const [loading, setLoading] = useState(false);
@@ -75,7 +76,10 @@ export function MyDataPage() {
 
   return (
     <div className="page">
-      <h1>내 데이터</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+        <h1 style={{ margin: 0 }}>내 데이터</h1>
+        <button onClick={() => navigate("/")} style={{ padding: "8px 16px", fontSize: "0.9rem" }}>홈</button>
+      </div>
 
       {error && <p className="error-text">{error}</p>}
 
@@ -89,7 +93,6 @@ export function MyDataPage() {
             <div key={submission.id} className="submission-item">
               <h3>{submission.fileName}</h3>
               <p>실험 날짜: {submission.experimentDate}</p>
-              <p>업로드: {formatTimestamp(submission.createdAt)}</p>
 
               <DataPreview
                 previewData={submission.previewData}

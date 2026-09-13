@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { listActiveExperiments } from "../lib/experiments";
 import { listSubmissionsByExperiment, getSubmissionDownloadUrl } from "../lib/submissions";
-import { formatTimestamp } from "../lib/dateFormat";
 import { DataPreview } from "../components/DataPreview";
 import type { Experiment } from "../types/experiment";
 import type { Submission } from "../types/submission";
 
 export function AllExperimentsDataPage() {
+  const navigate = useNavigate();
   const { firebaseUser } = useAuth();
   const [experiments, setExperiments] = useState<Array<Experiment & { id: string }>>([]);
   const [selectedExperimentId, setSelectedExperimentId] = useState("");
@@ -88,7 +89,10 @@ export function AllExperimentsDataPage() {
 
   return (
     <div className="page">
-      <h1>전체 실험 데이터</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+        <h1 style={{ margin: 0 }}>전체 실험 데이터</h1>
+        <button onClick={() => navigate("/")} style={{ padding: "8px 16px", fontSize: "0.9rem" }}>홈</button>
+      </div>
 
       <label>
         실험 선택
@@ -118,7 +122,6 @@ export function AllExperimentsDataPage() {
               <h3>{submission.studentName} ({submission.studentId})</h3>
               <p>{submission.fileName}</p>
               <p>실험 날짜: {submission.experimentDate}</p>
-              <p>업로드: {formatTimestamp(submission.createdAt)}</p>
 
               <DataPreview
                 previewData={submission.previewData}
