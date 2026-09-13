@@ -21,7 +21,7 @@ export async function determineRole(email: string | null): Promise<UserRole> {
 
 export async function createUserProfile(
   uid: string,
-  input: { name: string; studentId: string; className: string; grade: number; role: UserRole }
+  input: { name: string; studentId: string; role: UserRole }
 ): Promise<void> {
   await setDoc(doc(db, "users", uid), {
     ...input,

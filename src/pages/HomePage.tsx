@@ -10,7 +10,7 @@ export function HomePage() {
     <div className="page page-centered">
       <h1>Science Lab Data</h1>
       <p>
-        {profile.name} · {profile.grade}학년 {profile.className}반 {profile.studentId}번
+        {profile.name} · {profile.studentId}번
       </p>
 
       {profile.role === "teacher" ? (

@@ -5,8 +5,6 @@ import { createUserProfile, determineRole } from "../lib/userProfile";
 export function RegisterPage() {
   const { firebaseUser, refreshProfile } = useAuth();
   const [name, setName] = useState(firebaseUser?.displayName ?? "");
-  const [grade, setGrade] = useState("");
-  const [className, setClassName] = useState("");
   const [studentId, setStudentId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -16,9 +14,8 @@ export function RegisterPage() {
     if (!firebaseUser) return;
     setError(null);
 
-    const gradeNumber = Number(grade);
-    if (!name.trim() || !className.trim() || !studentId.trim() || !gradeNumber) {
-      setError("모든 항목을 입력해 주세요.");
+    if (!name.trim() || !studentId.trim() || studentId.trim().length !== 5) {
+      setError("이름과 5자리 학번을 입력해 주세요.");
       return;
     }
 
@@ -28,8 +25,6 @@ export function RegisterPage() {
       await createUserProfile(firebaseUser.uid, {
         name: name.trim(),
         studentId: studentId.trim(),
-        className: className.trim(),
-        grade: gradeNumber,
         role,
       });
       await refreshProfile();
@@ -50,22 +45,15 @@ export function RegisterPage() {
           <input value={name} onChange={(e) => setName(e.target.value)} required />
         </label>
         <label>
-          학년
+          학번 (5자리)
           <input
-            type="number"
+            type="text"
             inputMode="numeric"
-            value={grade}
-            onChange={(e) => setGrade(e.target.value)}
+            maxLength={5}
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value.replace(/\D/g, ""))}
             required
           />
-        </label>
-        <label>
-          반
-          <input value={className} onChange={(e) => setClassName(e.target.value)} required />
-        </label>
-        <label>
-          학번
-          <input value={studentId} onChange={(e) => setStudentId(e.target.value)} required />
         </label>
         <button type="submit" disabled={submitting}>
           {submitting ? "등록 중..." : "등록"}
