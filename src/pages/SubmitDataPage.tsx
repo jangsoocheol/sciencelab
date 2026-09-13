@@ -20,6 +20,7 @@ export function SubmitDataPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   useEffect(() => {
     loadExperiments();
@@ -35,10 +36,7 @@ export function SubmitDataPage() {
     }
   }
 
-  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  function validateAndSetFile(file: File) {
     setError(null);
     setSuccess(null);
 
@@ -60,6 +58,31 @@ export function SubmitDataPage() {
     }
 
     setSelectedFile(file);
+  }
+
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    validateAndSetFile(file);
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragOver(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragOver(false);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    validateAndSetFile(file);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -142,12 +165,46 @@ export function SubmitDataPage() {
           <input type="date" value={experimentDate} onChange={(e) => setExperimentDate(e.target.value)} />
         </label>
 
-        <label>
-          파일 선택 (CSV, XLSX, JPG, PNG)
-          <input type="file" onChange={handleFileChange} accept=".csv,.xlsx,.jpg,.jpeg,.png" />
-        </label>
-
-        {selectedFile && <p>선택된 파일: {selectedFile.name}</p>}
+        <div
+          style={{
+            border: `2px dashed ${isDragOver ? "var(--primary)" : "var(--border)"}`,
+            borderRadius: "8px",
+            padding: "24px",
+            textAlign: "center",
+            cursor: "pointer",
+            transition: "all 0.2s",
+            background: isDragOver ? "rgba(99, 102, 241, 0.05)" : "transparent",
+          }}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <label style={{ cursor: "pointer", display: "block" }}>
+            <div style={{ marginBottom: "8px" }}>
+              {selectedFile ? (
+                <>
+                  <p style={{ fontWeight: 600, margin: "0 0 8px 0" }}>✓ {selectedFile.name}</p>
+                  <p style={{ fontSize: "0.9rem", color: "var(--text-light)", margin: 0 }}>
+                    다시 클릭하거나 드래그해서 변경
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p style={{ fontWeight: 600, margin: "0 0 8px 0" }}>파일을 여기에 드래그하거나 클릭</p>
+                  <p style={{ fontSize: "0.9rem", color: "var(--text-light)", margin: 0 }}>
+                    CSV, XLSX, JPG, PNG (최대 10MB)
+                  </p>
+                </>
+              )}
+            </div>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              accept=".csv,.xlsx,.jpg,.jpeg,.png"
+              style={{ display: "none" }}
+            />
+          </label>
+        </div>
 
         <button type="submit" disabled={loading}>
           {loading ? "업로드 중..." : "업로드"}

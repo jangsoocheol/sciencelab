@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { listActiveExperiments } from "../lib/experiments";
 import { listSubmissionsByExperiment, getSubmissionDownloadUrl } from "../lib/submissions";
+import { formatTimestamp } from "../lib/dateFormat";
 import { DataPreview } from "../components/DataPreview";
 import type { Experiment } from "../types/experiment";
 import type { Submission } from "../types/submission";
@@ -117,7 +118,7 @@ export function AllExperimentsDataPage() {
               <h3>{submission.studentName} ({submission.studentId})</h3>
               <p>{submission.fileName}</p>
               <p>실험 날짜: {submission.experimentDate}</p>
-              <p>업로드: {new Date(submission.createdAt as unknown as number).toLocaleString()}</p>
+              <p>업로드: {formatTimestamp(submission.createdAt)}</p>
 
               <DataPreview
                 previewData={submission.previewData}

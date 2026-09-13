@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { listMySubmissions, deleteSubmission, getSubmissionDownloadUrl } from "../lib/submissions";
+import { formatTimestamp } from "../lib/dateFormat";
 import { DataPreview } from "../components/DataPreview";
 import type { Submission } from "../types/submission";
 
@@ -88,7 +89,7 @@ export function MyDataPage() {
             <div key={submission.id} className="submission-item">
               <h3>{submission.fileName}</h3>
               <p>실험 날짜: {submission.experimentDate}</p>
-              <p>업로드: {new Date(submission.createdAt as unknown as number).toLocaleString()}</p>
+              <p>업로드: {formatTimestamp(submission.createdAt)}</p>
 
               <DataPreview
                 previewData={submission.previewData}
