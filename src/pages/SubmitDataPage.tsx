@@ -139,7 +139,7 @@ export function SubmitDataPage() {
 
         <label>
           실험 날짜
-          <input type="date" value={experimentDate} onChange={(e) => setExperimentDate(e.target.value)} required />
+          <input type="date" value={experimentDate} onChange={(e) => setExperimentDate(e.target.value)} />
         </label>
 
         <label>

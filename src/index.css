@@ -1,14 +1,21 @@
 :root {
-  --primary: #3b82f6;
-  --primary-light: #60a5fa;
-  --primary-dark: #1e40af;
+  --primary: #6366f1;
+  --primary-light: #818cf8;
+  --primary-dark: #4f46e5;
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-dark: #7c3aed;
+  --success: #10b981;
+  --success-light: #34d399;
+  --success-dark: #059669;
+  --error: #ef4444;
+  --error-light: #f87171;
+  --error-dark: #dc2626;
   --bg: #f8fafc;
   --surface: #ffffff;
   --text: #1e293b;
   --text-light: #64748b;
   --border: #e2e8f0;
-  --success: #10b981;
-  --error: #ef4444;
 
   color-scheme: light dark;
   font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -55,20 +62,37 @@ button {
 button:hover:not(:disabled) {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+button:nth-child(2n) {
+  background: var(--accent);
+}
+button:nth-child(2n):hover:not(:disabled) {
+  background: var(--accent-dark);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+button:nth-child(3n) {
+  background: var(--success);
+}
+button:nth-child(3n):hover:not(:disabled) {
+  background: var(--success-dark);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .delete-btn {
-  background: var(--error);
+  background: var(--error) !important;
 }
 .delete-btn:hover:not(:disabled) {
-  background: #dc2626;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  background: var(--error-dark) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
 }
 
 .page {
