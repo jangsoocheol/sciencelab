@@ -1,0 +1,148 @@
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { createSubmission } from "../lib/submissions";
+import { parseSpreadsheetFile } from "../lib/spreadsheet";
+import { createResizedImage } from "../lib/imagePreview";
+import { listActiveExperiments } from "../lib/experiments";
+import type { Experiment } from "../types/experiment";
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+const MAX_SPREADSHEET_SIZE = 5 * 1024 * 1024;
+
+export function SubmitDataPage() {
+  const { firebaseUser, profile } = useAuth();
+  const [experiments, setExperiments] = useState<Array<Experiment & { id: string }>>([]);
+  const [selectedExperimentId, setSelectedExperimentId] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadExperiments();
+  }, []);
+
+  async function loadExperiments() {
+    try {
+      const list = await listActiveExperiments();
+      setExperiments(list);
+    } catch (err) {
+      console.error(err);
+      setError("실험 목록 로드 실패");
+    }
+  }
+
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setError(null);
+    setSuccess(null);
+
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    const isImage = ["jpg", "jpeg", "png"].includes(ext || "");
+    const isSpreadsheet = ["csv", "xlsx"].includes(ext || "");
+
+    if (!isImage && !isSpreadsheet) {
+      setError("CSV, XLSX, 또는 이미지(JPG/PNG) 파일만 허용합니다.");
+      return;
+    }
+
+    const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_SPREADSHEET_SIZE;
+    if (file.size > maxSize) {
+      setError(
+        `파일이 너무 큽니다. (최대: ${isImage ? "10MB" : "5MB"})`
+      );
+      return;
+    }
+
+    setSelectedFile(file);
+  }
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (!selectedExperimentId || !selectedFile || !firebaseUser || !profile) {
+      setError("모든 항목을 선택해 주세요.");
+      return;
+    }
+
+    setError(null);
+    setSuccess(null);
+    setLoading(true);
+
+    try {
+      const ext = selectedFile.name.split(".").pop()?.toLowerCase() || "";
+      const isImage = ["jpg", "jpeg", "png"].includes(ext);
+      const isSpreadsheet = ["csv", "xlsx"].includes(ext);
+
+      let previewData;
+      let previewBlob;
+
+      if (isSpreadsheet) {
+        previewData = await parseSpreadsheetFile(selectedFile);
+      } else if (isImage) {
+        previewBlob = await createResizedImage(selectedFile);
+      }
+
+      await createSubmission(
+        firebaseUser.uid,
+        selectedExperimentId,
+        profile.studentId,
+        profile.name,
+        selectedFile,
+        ext,
+        previewData,
+        previewBlob
+      );
+
+      setSuccess("파일이 업로드되었습니다!");
+      setSelectedFile(null);
+      setSelectedExperimentId("");
+      const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (input) input.value = "";
+    } catch (err) {
+      console.error(err);
+      setError("업로드 실패. 다시 시도해 주세요.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="page">
+      <h1>실험 데이터 제출</h1>
+
+      <form onSubmit={handleSubmit} className="form">
+        <label>
+          실험 선택
+          <select
+            value={selectedExperimentId}
+            onChange={(e) => setSelectedExperimentId(e.target.value)}
+            required
+          >
+            <option value="">-- 실험을 선택해 주세요 --</option>
+            {experiments.map((exp) => (
+              <option key={exp.id} value={exp.id}>
+                {exp.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          파일 선택 (CSV, XLSX, JPG, PNG)
+          <input type="file" onChange={handleFileChange} accept=".csv,.xlsx,.jpg,.jpeg,.png" />
+        </label>
+
+        {selectedFile && <p>선택된 파일: {selectedFile.name}</p>}
+
+        <button type="submit" disabled={loading}>
+          {loading ? "업로드 중..." : "업로드"}
+        </button>
+
+        {error && <p className="error-text">{error}</p>}
+        {success && <p className="success-text">{success}</p>}
+      </form>
+    </div>
+  );
+}

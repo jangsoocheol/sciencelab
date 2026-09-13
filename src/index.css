@@ -83,3 +83,111 @@ button:disabled {
 .error-text {
   color: #d33;
 }
+
+.success-text {
+  color: #0b0;
+}
+
+.form textarea,
+.form select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #888;
+  font: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a button {
+  width: 100%;
+}
+
+hr {
+  margin: 24px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+h2 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+}
+
+h3 {
+  margin: 8px 0;
+  font-size: 1.1rem;
+}
+
+.experiments-list,
+.submissions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.experiment-item,
+.submission-item {
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.preview-container {
+  margin: 16px 0;
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.preview-table {
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+
+.preview-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.preview-table th,
+.preview-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.preview-table th {
+  background: #f0f0f0;
+  font-weight: bold;
+}
+
+.preview-chart {
+  margin: 16px 0;
+}
+
+.preview-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.submission-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.submission-actions button {
+  flex: 1;
+}
+
+.delete-btn {
+  background: #fee;
+  color: #d33;
+}

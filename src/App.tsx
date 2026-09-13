@@ -3,6 +3,10 @@ import { useAuth } from "./contexts/AuthContext";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { HomePage } from "./pages/HomePage";
+import { TeacherDashboardPage } from "./pages/TeacherDashboardPage";
+import { SubmitDataPage } from "./pages/SubmitDataPage";
+import { MyDataPage } from "./pages/MyDataPage";
+import { AllExperimentsDataPage } from "./pages/AllExperimentsDataPage";
 
 function App() {
   const { firebaseUser, profile, loading } = useAuth();
@@ -42,6 +46,62 @@ function App() {
             <Navigate to="/register" replace />
           ) : (
             <HomePage />
+          )
+        }
+      />
+      <Route
+        path="/teacher"
+        element={
+          !firebaseUser ? (
+            <Navigate to="/login" replace />
+          ) : !profile ? (
+            <Navigate to="/register" replace />
+          ) : profile.role !== "teacher" ? (
+            <Navigate to="/" replace />
+          ) : (
+            <TeacherDashboardPage />
+          )
+        }
+      />
+      <Route
+        path="/submit"
+        element={
+          !firebaseUser ? (
+            <Navigate to="/login" replace />
+          ) : !profile ? (
+            <Navigate to="/register" replace />
+          ) : profile.role !== "student" ? (
+            <Navigate to="/" replace />
+          ) : (
+            <SubmitDataPage />
+          )
+        }
+      />
+      <Route
+        path="/my-data"
+        element={
+          !firebaseUser ? (
+            <Navigate to="/login" replace />
+          ) : !profile ? (
+            <Navigate to="/register" replace />
+          ) : profile.role !== "student" ? (
+            <Navigate to="/" replace />
+          ) : (
+            <MyDataPage />
+          )
+        }
+      />
+      <Route
+        path="/experiments"
+        element={
+          !firebaseUser ? (
+            <Navigate to="/login" replace />
+          ) : !profile ? (
+            <Navigate to="/register" replace />
+          ) : profile.role !== "student" ? (
+            <Navigate to="/" replace />
+          ) : (
+            <AllExperimentsDataPage />
           )
         }
       />

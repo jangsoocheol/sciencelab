@@ -1,4 +1,5 @@
 import { signOut } from "firebase/auth";
+import { Link } from "react-router-dom";
 import { auth } from "../lib/firebase";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -15,13 +16,21 @@ export function HomePage() {
 
       {profile.role === "teacher" ? (
         <nav className="nav-list">
-          <button disabled>Teacher Dashboard (준비 중)</button>
+          <Link to="/teacher">
+            <button>Teacher Dashboard</button>
+          </Link>
         </nav>
       ) : (
         <nav className="nav-list">
-          <button disabled>실험 데이터 제출 (준비 중)</button>
-          <button disabled>내 데이터 (준비 중)</button>
-          <button disabled>전체 실험 데이터 (준비 중)</button>
+          <Link to="/submit">
+            <button>실험 데이터 제출</button>
+          </Link>
+          <Link to="/my-data">
+            <button>내 데이터</button>
+          </Link>
+          <Link to="/experiments">
+            <button>전체 실험 데이터</button>
+          </Link>
         </nav>
       )}
 
